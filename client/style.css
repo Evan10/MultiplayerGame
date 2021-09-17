@@ -1,0 +1,57 @@
+
+
+* { margin: 0; padding: 0;}
+body, html{
+  border: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.game-screen{
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.start-screen{
+ margin-left:50%;
+ margin-top:10%;
+ width: 25vw;
+ height: 25vw;
+ transform: translateX(-50%);
+}
+
+button.start{
+  margin:auto;
+  width:20vw;
+  height: 3rem;
+}
+
+div.box{
+  width: 25vw;
+  background-color: red;
+}
+
+
+
+.game-screen canvas ,div {
+  position: absolute;
+}
+
+
+.game-screen .start-screen{
+  z-index: 10;
+}
+
+.hidden{
+  visibility:hidden;
+  opacity: 0;
+}
+
+.maxsize{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+

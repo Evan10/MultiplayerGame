@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Game</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+  
+    <div class="game-screen">
+    
+      <div class="start-screen">
+        
+        <button class="start">Play</button>
+
+        <div class="how-to-play box">
+          <h1 class="instruction-title">How to Play</h1>
+          <p class="instructions">
+            use "WASD" to move,<br> SPACE to teleport towards the mouse. <br>Left click
+            to shoot a bullet <br> and Right click to bring up your shield.<br>
+            Teleporting - 3 energy <br>shooting/shield - 1 energy
+          </p>
+        </div>
+  
+      </div>
+  
+      <canvas id="canvas" class="maxsize"></canvas>
+  
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./particals.js"></script>
+    <script src="./player.js"></script>
+    <script src="./bullet.js"></script>
+    <script src="./client.js"></script>
+  </body>
+</html>
