@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
     addPlayerToGame(socket,socket.userID);
   });
   socket.on('disconnect', () => {
-    checkforEmptyServer();
+    checkforEmptyGame();
     
     console.log('user disconnected');
   });
@@ -39,18 +39,18 @@ io.on('connection', (socket) => {
 function openGames(){
   let opengames = {};
   for(let i = games.length - 1 ; i >= 0; i--){
-    if(games[i].players.length>= playersPerGame){
-     
-
+    if(games[i].players.length < playersPerGame){
+      opengames.push({players:games[i].players.length ,gameID = games[i].ID});
     }
   }
+  return opengames;
 }
 
-function checkforEmptyServer(){
+function checkforEmptyGame(){
   for(let i = games.length - 1 ; i >= 0; i--){
     console.log("players:"+games[i].players.length);
     if(games[i].players.length<=0){
-      games[i].closeserver();
+      games[i].closeGame();
       games.splice(i,1);
     }
   }

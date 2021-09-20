@@ -25,7 +25,7 @@ this.deadPlayers = [];
 this.bullets = [];
 this.playerInfo = [];
 this.bulletInfo = [];
-this.closeServer =false;
+this.closeGame =false;
 this.collision = new Collision(this.players,this.bullets); 
 
 this.gameloop();
@@ -127,13 +127,13 @@ gamefull(){
 }
 
 
-closeserver(){
-  this.closeServer=true;
+closeGame(){
+  this.closeGame=true;
 }
 
 gameloop(){
 
-   if(this.closeServer){
+   if(this.closeGame){
      return;
    }
 
