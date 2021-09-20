@@ -40,7 +40,8 @@ function openGames(){
   let opengames = {};
   for(let i = games.length - 1 ; i >= 0; i--){
     if(games[i].players.length < playersPerGame){
-      opengames.push({players:games[i].players.length ,gameID = games[i].ID});
+      let gameid = games[i].ID;
+      opengames.push({players:games[i].players.length ,gameID : gameid});
     }
   }
   return opengames;
