@@ -41,7 +41,8 @@ function openGames(){
   for(let i = games.length - 1 ; i >= 0; i--){
     if(games[i].players.length < playersPerGame){
       let gameid = games[i].ID;
-      opengames.push({players:games[i].players.length ,gameID : gameid});
+      let gameobj = {players:games[i].players.length ,gameID : gameid};
+      opengames[i]=gameobj;
     }
   }
   return opengames;

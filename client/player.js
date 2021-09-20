@@ -56,7 +56,8 @@ class player {
   render(cxt){
     if(this.dead){return;}
     cxt.beginPath();  
-    cxt.fillStyle=`rgb(100,100,100,1)`; 
+    cxt.fillStyle=`rgb(100,100,100,1)`;
+    cxt.strokeStyle = "rgba(0,0,0,0)"; 
     cxt.arc(this.x,this.y,this.playerRadius,0,Math.PI*2,false);
     cxt.fill();
     this.drawhealthbar(cxt);

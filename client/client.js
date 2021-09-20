@@ -272,13 +272,14 @@ function drawbackground(x, y, cxt) {
   let rectwidth = canvas.width / 10;
   let rectheight = canvas.height / 10;
 
-  for (let i = 0; i <= 10; i++) {
-    for (let j = 0; j <= 10; j++) {
-      cxt.fillRect = "white";     
-      cxt.fillRect(i*rectwidth+(i%rectwidth),j*rectheight+(j%rectheight),rectwidth,rectheight);
-
+  for (let i = -1; i <= 10; i++) {
+    for (let j = -1; j <= 10; j++) { 
+      cxt.strokeStyle = "black";  
+      cxt.rect(i*rectwidth-(client_player.x%rectwidth),j*rectheight-(client_player.y%rectheight),rectwidth,rectheight);
+      
     }
   }
+  cxt.stroke(); 
 }
 
 let frameID;
