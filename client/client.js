@@ -237,6 +237,7 @@ function tick() {
 
 function render() {
   cxt.fillStyle = "rgba(200,200,200,1)";
+  console.log(cxt);
   cxt.fillRect(0, 0, canvas.width, canvas.height);
 
   let ty = 0,
