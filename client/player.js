@@ -23,6 +23,7 @@ class player {
   }
 
   tick() {
+    if(this.dead){return;}
     if(this.clientPlayer){
       this.clientmovement();
     }else{
@@ -31,6 +32,7 @@ class player {
   }
 
   clientmovement(){
+    
     let xchange=0;
     let ychange=0;
     let move = false;
@@ -43,8 +45,12 @@ class player {
     this.x+=Math.cos(this.playerAngle)*this.playerspeed;
     this.y+=Math.sin(this.playerAngle)*this.playerspeed;
    }
+   this.stayInMap();
   } 
-
+  stayInMap(){
+    this.x = this.x > this.client.gameMapSize.w ? this.client.gameMapSize.w : this.x < 0 ? 0 : this.x; 
+    this.y = this.y > this.client.gameMapSize.h ? this.client.gameMapSize.h : this.y < 0 ? 0 : this.y; 
+  }
   playermovement(){
     this.playerAngle= Math.atan2(this.y-this.lasty,this.x-this.lastx);
     if(this.y != this.lasty || this.x != this.lastx){
@@ -57,8 +63,8 @@ class player {
     if(this.dead){return;}
     cxt.beginPath();  
     cxt.fillStyle=`rgb(100,100,100,1)`;
-    cxt.strokeStyle = "rgba(0,0,0,0)"; 
     cxt.arc(this.x,this.y,this.playerRadius,0,Math.PI*2,false);
+    cxt.stroke();
     cxt.fill();
     this.drawhealthbar(cxt);
     this.drawenergybar(cxt);

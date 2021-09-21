@@ -11,6 +11,7 @@ window.onbeforeunload = function() {
 document.querySelector(".start").addEventListener("click", () => {
   socket.emit("join-game");
   document.querySelector(".start-screen").classList.toggle("hidden");
+  requestAnimationFrame(gameloop);
 });
 
 document.addEventListener("mousemove", (e) => {
@@ -82,6 +83,7 @@ document.addEventListener("keyup", (e) => {
 
 const keys = [false, false, false, false, false];
 const particalspawners = [];
+this.gameMapSize = {w:1000,h:1000}
 
 function getkeys() {
   return keys;
@@ -133,7 +135,17 @@ socket.on("bulletInfo", (info) => {
   }
 });
 
-socket.on("Teleport", (info) => {});
+socket.on("Teleport", (info) => {
+  players[info.id].x = info.x;
+  players[info.id].y = info.y;
+   let tx = info.lastx;
+   let ty = info.lasty;
+  for(let i = 0 ; i < 15 ; i ++){
+    tx+=Math.cos(info.angle)*10;
+    ty+=Math.sin(info.angle)*10;
+    addparticalSpawner(tx,ty,10,["rgba(10,40,200,"],40,2,1,-1,-3,info.angle+Math.PI/12,info.angle-Math.PI/12,true);
+  }
+});
 
 socket.on("shieldup", (id) => {
   players[id].turnonshield();
@@ -190,6 +202,10 @@ socket.on("initClient", (info) => {
   clientInfo();
 });
 
+socket.on("playerRespawn", (id) => {
+  players[id].dead=false; 
+} );
+
 function clientInfo() {
   socket.emit("canvasSize", { w: canvas.width, h: canvas.height });
 }
@@ -237,7 +253,6 @@ function tick() {
 
 function render() {
   cxt.fillStyle = "rgba(200,200,200,1)";
-  console.log(cxt);
   cxt.fillRect(0, 0, canvas.width, canvas.height);
 
   let ty = 0,
@@ -246,12 +261,14 @@ function render() {
     drawHUD(client_player);
     (tx = -client_player.x + canvas.width / 2),
       (ty = -client_player.y + canvas.height / 2);
+      drawbackground(tx, ty, cxt);
   }
-  drawbackground(tx, ty, cxt);
-
+  
+ 
   cxt.save();
   cxt.translate(tx, ty);
 
+  drawBorder(cxt);
   for (let i = particalspawners.length - 1; i >= 0; i--) {
     let ps = particalspawners[i];
     ps.tick();
@@ -267,16 +284,21 @@ function render() {
 
   cxt.restore();
 }
-
+function drawBorder(cxt){
+  cxt.beginPath();
+  cxt.strokeStyle = "rgba(30,30,30,1)"
+  cxt.lineWidth = 4;
+  cxt.rect(0,0,gameMapSize.w,gameMapSize.h);
+  cxt.stroke();
+}
 function drawbackground(x, y, cxt) {
   let rectwidth = canvas.width / 10;
   let rectheight = canvas.height / 10;
 
   for (let i = -1; i <= 10; i++) {
-    for (let j = -1; j <= 10; j++) { 
+    for (let j = -1; j <= 10; j++) {
       cxt.strokeStyle = "black";  
       cxt.rect(i*rectwidth-(client_player.x%rectwidth),j*rectheight-(client_player.y%rectheight),rectwidth,rectheight);
-      
     }
   }
   cxt.stroke(); 
@@ -314,4 +336,4 @@ function gameloop(timestamp) {
 
 function drawHUD(player) {}
 
-requestAnimationFrame(gameloop);
+

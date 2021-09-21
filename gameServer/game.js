@@ -21,12 +21,13 @@ this.lastsecond = 0;
 this.ticks = 0;
 this.MaxPlayers = 5;
 this.players = [];
-this.deadPlayers = [];
 this.bullets = [];
 this.playerInfo = [];
 this.bulletInfo = [];
 this.closeGame =false;
 this.collision = new Collision(this.players,this.bullets); 
+
+this.gameMapSize = {w:1000,h:1000}
 
 this.gameloop();
 }
@@ -36,7 +37,7 @@ tick(){
 
    for(let i = this.players.length - 1 ; i >= 0 ; i --){
     let player = this.players[i];
-    if( player != null){
+    if( player != null && !player.dead){
       player.tick();
       if(player.hp <= 0){
         this.playerdead(player, i);
@@ -101,9 +102,8 @@ addBullet(parentid, x, y, angle){
 
 
 playerdead(player, i){
-  this.deadPlayers.push(player);
-  this.players.splice(i,1);
-  this.io.sockets.in(this.ID).emit("deadPlayer",player.ID);
+  player.dead = true;
+ this.io.sockets.in(this.ID).emit("deadPlayer",player.ID);
 }
 
 addPlayer(id, socket){
@@ -113,13 +113,15 @@ addPlayer(id, socket){
     console.log(playerinfo);
    socket.emit("new_player", playerinfo);
   }
-  let x=0,y=0;
+  let x=Math.random()*this.gameMapSize.w,y=Math.random()*this.gameMapSize.h;
   this.players.push(new Player(id, x, y, socket,this));
   socket.emit("initClient",{id:id, x:x, y:y});
   socket.to(this.ID).emit("new_player",{id:id, x:x, y:y});
-
- 
-
+  socket.on('play-again',()=>{
+   let player = players[players.findIndex(plyr => plyr.ID == id)];
+   player.setPostion(Math.random()*this.gameMapSize.w,Math.random()*this.gameMapSize.h); 
+   this.io.sockets.in(this.ID).emit("playerRespawn",player.ID);
+  })
 }
 
 gamefull(){

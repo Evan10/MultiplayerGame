@@ -32,6 +32,7 @@ module.exports = class player {
     this.shieldUp = false;
     this.shieldstart=0;
     this.hp = 3;
+    this.dead = false;
     this.energy = 10;
     this.maxEnergy=10;
 
@@ -76,7 +77,12 @@ module.exports = class player {
     this.x+=Math.cos(this.playerAngle)*this.playerSpeed;
      this.y+=Math.sin(this.playerAngle)*this.playerSpeed;
    }
+   this.stayInMap();
+  }
 
+  stayInMap(){
+    this.x = this.x > this.game.gameMapSize.w ? this.game.gameMapSize.w : this.x < 0 ? 0 : this.x; 
+    this.y = this.y > this.game.gameMapSize.h ? this.game.gameMapSize.h : this.y < 0 ? 0 : this.y; 
   }
 
   teleport(){
@@ -88,7 +94,7 @@ module.exports = class player {
     this.x+= Math.cos(this.mouseAngle)*this.tp_distance;
     this.y+= Math.sin(this.mouseAngle)*this.tp_distance;
     this.energy-=3;
-    this.game.io.to(this.game.ID).emit("Teleport",{id:this.ID,lastx:lastx,lasty:lasty,x:this.x,y:this.y});
+    this.game.io.to(this.game.ID).emit("Teleport",{id:this.ID,lastx:lastx,lasty:lasty,x:this.x,y:this.y,angle:this.mouseAngle});
     this.setEnergyRegenTime(2000);
     }
    }
@@ -159,6 +165,10 @@ module.exports = class player {
     
   }
 
+  setPostion(x,y){
+    this.x=x;
+    this.y=y;
+  }
 
 
 }

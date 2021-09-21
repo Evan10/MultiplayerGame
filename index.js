@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
   console.log('a user connected');
  
   socket.userID = createID();
-  socket.emit("Games",openGames());
+  //socket.emit("Games",openGames());
 
   socket.on("join-game",()=>{
     console.log("player joined a Game")
@@ -51,7 +51,7 @@ function openGames(){
 function checkforEmptyGame(){
   for(let i = games.length - 1 ; i >= 0; i--){
     console.log("players:"+games[i].players.length);
-    if(games[i].players.length<=0){
+    if(games[i] instanceof GameInstance && games[i].players.length<=0){
       games[i].closeGame();
       games.splice(i,1);
     }
@@ -65,7 +65,7 @@ function createGame(){
 }
 
 function addPlayerToGame(socket){
-  let opengame = gameopen();
+  let opengame = firstgameopen();
    if( !opengame ){
     opengame = createGame();
    }
@@ -73,7 +73,7 @@ function addPlayerToGame(socket){
    opengame.addPlayer(socket.userID, socket);
 }
 
-function gameopen(){
+function firstgameopen(){
   if( games.length == 0 ){
     return false;
   }
