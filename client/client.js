@@ -3,15 +3,19 @@ const cxt = canvas.getContext("2d");
 canvas.width = document.body.clientWidth;
 canvas.height = document.body.clientHeight;
 
-window.onbeforeunload = function() {
+window.onbeforeunload = function () {
   socket.onclose = function () {}; // disable onclose handler first
   socket.close();
 };
 
 document.querySelector(".start").addEventListener("click", () => {
-  socket.emit("join-game");
+  if (!respawn) {
+    socket.emit("join-game", document.querySelector(".player-name").value);
+    respawn = true;
+  } else {
+    socket.emit("play-again", document.querySelector(".player-name").value);
+  }
   document.querySelector(".start-screen").classList.toggle("hidden");
-  requestAnimationFrame(gameloop);
 });
 
 document.addEventListener("mousemove", (e) => {
@@ -83,7 +87,8 @@ document.addEventListener("keyup", (e) => {
 
 const keys = [false, false, false, false, false];
 const particalspawners = [];
-this.gameMapSize = {w:1000,h:1000}
+this.gameMapSize = { w: 1000, h: 1000 };
+let respawn = false;
 
 function getkeys() {
   return keys;
@@ -99,8 +104,13 @@ var socket = io();
 const players = {};
 const Bullets = {};
 let client_player;
-
-//tempbullet.angle=info[i].angle;
+let gameStarted = false;
+const playerscoreboard = new scoreboard(
+  canvas.width - canvas.width / 6,
+  0,
+  canvas.width / 6,
+  canvas.height / 2
+);
 
 socket.on("new_bullet", (info) => {
   Bullets[info.id] = new bullet(info.id, info.x, info.y, info.angle);
@@ -138,12 +148,25 @@ socket.on("bulletInfo", (info) => {
 socket.on("Teleport", (info) => {
   players[info.id].x = info.x;
   players[info.id].y = info.y;
-   let tx = info.lastx;
-   let ty = info.lasty;
-  for(let i = 0 ; i < 15 ; i ++){
-    tx+=Math.cos(info.angle)*10;
-    ty+=Math.sin(info.angle)*10;
-    addparticalSpawner(tx,ty,10,["rgba(10,40,200,"],40,2,1,-1,-3,info.angle+Math.PI/12,info.angle-Math.PI/12,true);
+  let tx = info.lastx;
+  let ty = info.lasty;
+  for (let i = 0; i < 15; i++) {
+    tx += Math.cos(info.angle) * 10;
+    ty += Math.sin(info.angle) * 10;
+    addparticalSpawner(
+      tx,
+      ty,
+      10,
+      ["rgba(10,40,200,"],
+      40,
+      2,
+      1,
+      -1,
+      -3,
+      info.angle + Math.PI / 12,
+      info.angle - Math.PI / 12,
+      true
+    );
   }
 });
 
@@ -167,8 +190,16 @@ socket.on("playerInfo", (info) => {
     }
   }
 });
+
 socket.on("new_player", (info) => {
-  players[info.id] = new player(info.id, info.x, info.y, false, this);
+  players[info.id] = new player(
+    info.id,
+    info.x,
+    info.y,
+    false,
+    this,
+    info.playerName
+  );
   console.log("new Player");
   console.log(info);
 });
@@ -194,17 +225,33 @@ socket.on("deadPlayer", (id) => {
     Math.PI * 2,
     true
   );
+  if (p === client_player) {
+    document.querySelector(".start-screen").classList.toggle("hidden");
+  }
 });
 
 socket.on("initClient", (info) => {
-  client_player = new player(info.id, info.x, info.y, true, this);
+  client_player = new player(
+    info.id,
+    info.x,
+    info.y,
+    true,
+    this,
+    info.playerName
+  );
   players[info.id] = client_player;
   clientInfo();
+  gameStarted=true;
 });
 
-socket.on("playerRespawn", (id) => {
-  players[id].dead=false; 
-} );
+socket.on("playerRespawn", (info) => {
+  players[info.id].dead = false;
+  players[info.id].x = info.x;
+  players[info.id].x = info.y;
+  players[info.id].playerName = info.playerName;
+});
+
+socket.on("scoreboard", (info) => playerscoreboard.updatescoreboardinfo(info));
 
 function clientInfo() {
   socket.emit("canvasSize", { w: canvas.width, h: canvas.height });
@@ -249,11 +296,15 @@ function tick() {
   Object.keys(players).forEach((key) => {
     players[key].tick();
   });
+
+
 }
 
 function render() {
   cxt.fillStyle = "rgba(200,200,200,1)";
   cxt.fillRect(0, 0, canvas.width, canvas.height);
+
+if(!gameStarted){return;}
 
   let ty = 0,
     tx = 0;
@@ -261,10 +312,9 @@ function render() {
     drawHUD(client_player);
     (tx = -client_player.x + canvas.width / 2),
       (ty = -client_player.y + canvas.height / 2);
-      drawbackground(tx, ty, cxt);
+    drawbackground(tx, ty, cxt);
   }
-  
- 
+
   cxt.save();
   cxt.translate(tx, ty);
 
@@ -281,14 +331,15 @@ function render() {
   Object.keys(players).forEach((key) => {
     players[key].render(cxt);
   });
-
   cxt.restore();
+  playerscoreboard.render(cxt);
+
 }
-function drawBorder(cxt){
+function drawBorder(cxt) {
   cxt.beginPath();
-  cxt.strokeStyle = "rgba(30,30,30,1)"
+  cxt.strokeStyle = "rgba(30,30,30,1)";
   cxt.lineWidth = 4;
-  cxt.rect(0,0,gameMapSize.w,gameMapSize.h);
+  cxt.rect(0, 0, gameMapSize.w, gameMapSize.h);
   cxt.stroke();
 }
 function drawbackground(x, y, cxt) {
@@ -297,11 +348,16 @@ function drawbackground(x, y, cxt) {
 
   for (let i = -1; i <= 10; i++) {
     for (let j = -1; j <= 10; j++) {
-      cxt.strokeStyle = "black";  
-      cxt.rect(i*rectwidth-(client_player.x%rectwidth),j*rectheight-(client_player.y%rectheight),rectwidth,rectheight);
+      cxt.strokeStyle = "black";
+      cxt.rect(
+        i * rectwidth - (client_player.x % rectwidth),
+        j * rectheight - (client_player.y % rectheight),
+        rectwidth,
+        rectheight
+      );
     }
   }
-  cxt.stroke(); 
+  cxt.stroke();
 }
 
 let frameID;
@@ -336,4 +392,4 @@ function gameloop(timestamp) {
 
 function drawHUD(player) {}
 
-
+requestAnimationFrame(gameloop);

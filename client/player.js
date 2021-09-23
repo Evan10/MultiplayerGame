@@ -1,6 +1,6 @@
 
 class player {
-    constructor(id, x, y,player,client) {
+    constructor(id, x, y,player,client,playerName) {
     this.ID = id;
     this.x = x;
     this.y = y;
@@ -11,6 +11,7 @@ class player {
     this.playerRadius = 30;
 
     this.clientPlayer = player;
+    this.playerName = playerName;
 
     this.hp = 3;
     this.dead = false;
@@ -66,6 +67,7 @@ class player {
     cxt.arc(this.x,this.y,this.playerRadius,0,Math.PI*2,false);
     cxt.stroke();
     cxt.fill();
+    this.drawPlayerName(cxt);
     this.drawhealthbar(cxt);
     this.drawenergybar(cxt);
     if(this.shieldup){
@@ -116,6 +118,17 @@ drawhealthbar(cxt){
       cxt.fillRect(bx+(i*boxwidth)+((i+1)*3),by,boxwidth,(this.playerRadius/3));
   }
 
+}
+
+drawPlayerName(cxt){
+  cxt.save();
+  let nx = this.x;
+  let ny = this.y-this.playerRadius-35;
+  cxt.textAlign = 'center';
+  cxt.fillStyle = "black";
+  cxt.font = '17px serif';
+  cxt.fillText(this.playerName,nx,ny);
+  cxt.restore();
 }
 
 setposition(x,y){

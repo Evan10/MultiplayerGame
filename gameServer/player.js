@@ -1,7 +1,7 @@
 
 const Bullet = require("./bullet.js");
 module.exports = class player {
-    constructor(id, x, y, socket, game) {
+    constructor(id, x, y, socket, game,playerName) {
     this.game = game;
     this.socket=socket;
     this.socket.on("keys", (keys) => {
@@ -28,7 +28,10 @@ module.exports = class player {
     this.y = y;
     this.canvasSize = {};
     this.playerRadius = 30;
- 
+ this.playerName=playerName;
+
+    this.playerKills = 0;
+
     this.shieldUp = false;
     this.shieldstart=0;
     this.hp = 3;
@@ -115,7 +118,7 @@ module.exports = class player {
 
   shootBullet() {
     if (this.energy >= 1 && !this.shieldUp && this.mouseButtons[0] && this.bulletCooldown <= Date.now()) {
-        this.game.addBullet(this.ID,this.x,this.y,this.mouseAngle);
+        this.game.addBullet(this.ID,this.x,this.y,this.mouseAngle,this);
         this.mouseButtonsHeld[0]=true;
         this.bulletCooldown=Date.now()+400;//.4 seconds between shots
     this.energy--;
@@ -162,7 +165,7 @@ module.exports = class player {
     if(this.hp>0){
     this.hp--;
     }
-    
+
   }
 
   setPostion(x,y){
@@ -170,5 +173,12 @@ module.exports = class player {
     this.y=y;
   }
 
+
+  resetPlayer(){
+    this.hp = 3;
+    this.energy = 10;
+    this.dead = false;
+    this.playerKills = 0;
+  }
 
 }

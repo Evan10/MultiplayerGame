@@ -25,9 +25,9 @@ io.on('connection', (socket) => {
   socket.userID = createID();
   //socket.emit("Games",openGames());
 
-  socket.on("join-game",()=>{
+  socket.on("join-game",(playerName)=>{
     console.log("player joined a Game")
-    addPlayerToGame(socket,socket.userID);
+    addPlayerToGame(socket,playerName);
   });
   socket.on('disconnect', () => {
     checkforEmptyGame();
@@ -51,8 +51,12 @@ function openGames(){
 function checkforEmptyGame(){
   for(let i = games.length - 1 ; i >= 0; i--){
     console.log("players:"+games[i].players.length);
-    if(games[i] instanceof GameInstance && games[i].players.length<=0){
-      games[i].closeGame();
+    let tgame = games[i];
+    if(tgame instanceof GameInstance && tgame.players.length<=0){
+      console.log(tgame);
+      try{
+      tgame.closeGame();
+      }catch(e){console.log(e);}
       games.splice(i,1);
     }
   }
@@ -64,13 +68,13 @@ function createGame(){
  return game;
 }
 
-function addPlayerToGame(socket){
+function addPlayerToGame(socket,playerName){
   let opengame = firstgameopen();
    if( !opengame ){
     opengame = createGame();
    }
    socket.join(opengame.ID);
-   opengame.addPlayer(socket.userID, socket);
+   opengame.addPlayer(socket.userID, socket,playerName);
 }
 
 function firstgameopen(){

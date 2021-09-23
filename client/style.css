@@ -22,17 +22,38 @@ body, html{
 }
 
 button.start{
-  margin:auto;
+  margin-left:50%;
   width:20vw;
-  height: 3rem;
+  height:3rem;
+  transform: translateX(-50%);
+  border-color: white;
+  border-radius: 10px;
+}
+input.player-name{
+  margin-left:50%;
+  width:20vw;
+  height:2rem;
+  transform: translateX(-50%);
 }
 
 div.box{
   width: 25vw;
-  background-color: red;
+  background-color: rgb(114, 114, 114);
 }
 
-
+.box p{
+  margin-left:50%;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  transform: translateX(-50%);
+}
+.box h1{
+  margin-left:50%;
+  color: white;
+  text-align: center;
+  transform: translateX(-50%);
+}
 
 .game-screen canvas ,div {
   position: absolute;

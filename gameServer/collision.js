@@ -16,10 +16,15 @@ for(let i = this.bulletlist.length-1; i >= 0 ; i --){
     let b = this.bulletlist[i];
     for(let j = this.playerlist.length-1; j >= 0 ; j --){
     let p = this.playerlist[j];
+    if(p.dead||p.hp<=0){continue;}
+    
     if(!b.removeBullet && b.parentid!=p.ID && this.circleCollision(b.x,b.y,b.bulletRadius,p.x,p.y,p.playerRadius)){
      b.collision();
     if(!p.shieldUp){
         p.collision();
+        if(p.hp<=0){
+            b.player.playerKills++;
+        }
     }else{
         let angle = Math.atan2(b.y-p.y,b.x-p.x);
         let shieldstartangle=p.mouseAngle-Math.PI/3;

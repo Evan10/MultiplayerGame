@@ -1,6 +1,7 @@
 module.exports = class bullet {
-    constructor(parentid,id, x, y,bulletAngle) {
+    constructor(parentid,id, x, y,bulletAngle,player) {
     this.parentid=parentid;
+    this.player=player;
     this.ID = id;
     this.x = x;
     this.y = y;
