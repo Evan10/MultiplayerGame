@@ -27,8 +27,21 @@ module.exports = class GameInstance {
     this.gameMapSize = { w: 1000, h: 1000 };
 
     this.gameloop();
+    setInterval(() => {
+      let scoreboard = [];
+      for (let i = this.players.length - 1; i >= 0; i--) {
+        let player = this.players[i];
+        if (player != null && !player.dead) {
+          scoreboard.push({playerName:player.playerName,Kills:player.playerKills});
+        }
+      }
+      scoreboard.sort((a,b)=>{ return b.Kills-a.Kills;})
+      this.io.sockets.in(this.ID).emit("scoreboard", scoreboard);
+    }, 1000);
   }
 
+
+  
   tick() {
     this.collision.tick();
 
@@ -55,17 +68,7 @@ module.exports = class GameInstance {
       this.client_tick();
       this.ticks_last_client_update = 0;
     }
-    setInterval(() => {
-      let scoreboard = [];
-      for (let i = this.players.length - 1; i >= 0; i--) {
-        let player = this.players[i];
-        if (player != null && !player.dead) {
-          scoreboard.push({playerName:player.playerName,Kills:player.playerKills});
-        }
-      }
-      scoreboard.sort((a,b)=>{ return b.Kills-a.Kills;})
-      this.io.sockets.in(this.ID).emit("scoreboard", scoreboard);
-    }, 1000);
+   
   }
 
   
