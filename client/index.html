@@ -3,30 +3,44 @@
   <head>
     <title>Game</title>
     <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="./images/favicon-32x32.png"
+      sizes="32x32"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="./images/favicon-16x16.png"
+      sizes="16x16"
+    />
   </head>
 
   <body>
-  
     <div class="game-screen">
-    
       <div class="start-screen">
-        
-        <input type="text" class ="player-name" id="player-name" value = "unnamed">
+        <input
+          type="text"
+          class="player-name"
+          id="player-name"
+          value="unnamed"
+        />
         <button class="start">Play</button>
-          
+
         <div class="how-to-play box">
           <h1 class="instruction-title">How to Play</h1>
           <p class="instructions">
-            use "WASD" to move,<br> SPACE to teleport towards the mouse. <br>Left click
-            to shoot a bullet <br> and Right click to bring up your shield.<br>
-            Teleporting - 3 energy <br>shooting/shield - 1 energy
+            use "WASD" to move,<br />
+            SPACE to teleport towards the mouse.<br />Killing another player
+            will give you 1 health <br />Left click to shoot a bullet <br />
+            and Right click to bring up your shield.<br />
+            Teleporting - 3 energy <br />shooting/shield - 1 energy
           </p>
         </div>
-  
       </div>
-  
+
       <canvas id="canvas" class="maxsize"></canvas>
-  
     </div>
 
     <script src="/socket.io/socket.io.js"></script>

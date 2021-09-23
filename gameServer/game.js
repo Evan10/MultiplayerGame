@@ -76,7 +76,7 @@ module.exports = class GameInstance {
   client_tick() {
     for (let i = this.players.length - 1; i >= 0; i--) {
       let player = this.players[i];
-      if (player != null) {
+      if (player != null&& !player.dead) {
         this.playerInfo[i] = {
           id: player.ID,
           x: player.x,
@@ -126,6 +126,7 @@ module.exports = class GameInstance {
 
   addPlayer(id, socket, playerName) {
     for (let i = this.players.length - 1; i >= 0; i--) {
+      if(this.players[i].dead){continue;}
       let playerinfo = {
         id: this.players[i].ID,
         x: this.players[i].x,
