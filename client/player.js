@@ -1,6 +1,6 @@
 
 class player {
-    constructor(id, x, y,player,client,playerName) {
+    constructor(id, x, y,player,client,playerName,dead) {
     this.ID = id;
     this.x = x;
     this.y = y;
@@ -14,7 +14,7 @@ class player {
     this.playerName = playerName;
 
     this.hp = 3;
-    this.dead = false;
+    this.dead = dead || false;
     this.energy = 10;
     this.maxEnergy =10;
     this.playerspeed=3;

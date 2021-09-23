@@ -126,12 +126,12 @@ module.exports = class GameInstance {
 
   addPlayer(id, socket, playerName) {
     for (let i = this.players.length - 1; i >= 0; i--) {
-      if(this.players[i].dead){continue;}
       let playerinfo = {
         id: this.players[i].ID,
         x: this.players[i].x,
         y: this.players[i].y,
-        playerName: this.players[i].playerName
+        playerName: this.players[i].playerName,
+        dead:this.players[i].dead
       };
       console.log(playerinfo);
       socket.emit("new_player", playerinfo);
