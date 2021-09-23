@@ -198,7 +198,8 @@ socket.on("new_player", (info) => {
     info.y,
     false,
     this,
-    info.playerName
+    info.playerName,
+    info.dead
   );
   console.log("new Player");
   console.log(info);
