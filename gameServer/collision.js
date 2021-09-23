@@ -16,7 +16,7 @@ for(let i = this.bulletlist.length-1; i >= 0 ; i --){
     let b = this.bulletlist[i];
     for(let j = this.playerlist.length-1; j >= 0 ; j --){
     let p = this.playerlist[j];
-    if(p.dead||p.hp<=0){continue;}
+    if(p.dead){continue;}
     
     if(!b.removeBullet && b.parentid!=p.ID && this.circleCollision(b.x,b.y,b.bulletRadius,p.x,p.y,p.playerRadius)){
      b.collision();
