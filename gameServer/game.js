@@ -152,6 +152,7 @@ module.exports = class GameInstance {
       console.log(playerinfo);
       socket.emit("new_player", playerinfo);
     }
+    socket.emit("new-king",playerWithMostKills.ID);
     let x = Math.random() * this.gameMapSize.w,
       y = Math.random() * this.gameMapSize.h;
     this.players.push(new Player(id, x, y, socket, this, playerName));
