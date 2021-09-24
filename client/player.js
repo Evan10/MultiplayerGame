@@ -14,13 +14,15 @@ class player {
     this.playerName = playerName;
 
     this.hp = 3;
+    this.maxhp = 3;
     this.dead = dead || false;
-    this.energy = 10;
+    this.energy = 5;
     this.maxEnergy =10;
     this.playerspeed=3;
     this.shieldup=false;
     this.shieldLifespan = 0;
     this.mouseAngle = 0;
+    this.king=false;
   }
 
   tick() {
@@ -63,7 +65,7 @@ class player {
   render(cxt){
     if(this.dead){return;}
     cxt.beginPath();  
-    cxt.fillStyle=`rgb(100,100,100,1)`;
+    cxt.fillStyle=this.king?"rgb(255, 215, 0, 1)":`rgb(100,100,100,1)`;
     cxt.arc(this.x,this.y,this.playerRadius,0,Math.PI*2,false);
     cxt.stroke();
     cxt.fill();
@@ -100,22 +102,26 @@ drawshieldlifespan(cxt){
 }
 
 drawenergybar(cxt){
-    let bx = this.x-this.playerRadius-this.maxEnergy*1.5;
+    let boxwidth = (this.playerRadius*2/this.maxEnergy);
+    let energySpacing = 3;
+    let bx = this.x-this.playerRadius-(this.maxEnergy*energySpacing/2);
     let by = this.y+this.playerRadius+10;
-    let boxwidth = this.playerRadius/5;
+    
     for(let i = 0 ; i < this.energy ; i++){
         cxt.fillStyle="rgba(0,0,255,1)"
-        cxt.fillRect(bx+(i*boxwidth)+((i+1)*3),by,boxwidth,(this.playerRadius/3));
+        cxt.fillRect(bx+(i*boxwidth)+(i*energySpacing),by,boxwidth,(this.playerRadius/3));
     }
 
 }
 drawhealthbar(cxt){
-  let bx = this.x-this.playerRadius-5;
+  let boxwidth = (this.playerRadius*2/this.maxhp);
+  let healthbarSpacing = 3;
+  let bx = this.x-this.playerRadius-(this.maxhp*healthbarSpacing/2);
   let by = this.y-this.playerRadius-20;
-  let boxwidth = this.playerRadius/1.5;
+ 
   for(let i = 0 ; i < this.hp ; i++){
       cxt.fillStyle="rgba(200,0,0,1)"
-      cxt.fillRect(bx+(i*boxwidth)+((i+1)*3),by,boxwidth,(this.playerRadius/3));
+      cxt.fillRect(bx+(i*boxwidth)+(i*healthbarSpacing),by,boxwidth,(this.playerRadius/3));
   }
 
 }
@@ -147,6 +153,17 @@ turnonshield(){
 turnoffshield(){
   this.shieldLifespan = 0;
   this.shieldup=false;
+}
+
+mostKills(){
+  this.maxhp = 4;
+  this.maxEnergy = 15;
+  this.king=true;
+}
+notMostKills(){
+  this.maxhp = 3;
+  this.maxEnergy = 10;
+  this.king=false;
 }
 
 

@@ -23,19 +23,35 @@ module.exports = class GameInstance {
     this.bulletInfo = [];
     this.closeGame = false;
     this.collision = new Collision(this.players, this.bullets);
+    this.playerWithMostKills = null;
 
     this.gameMapSize = { w: 1000, h: 1000 };
 
     this.gameloop();
     setInterval(() => {
       let scoreboard = [];
+      let tempPlayer=null;
       for (let i = this.players.length - 1; i >= 0; i--) {
         let player = this.players[i];
         if (player != null && !player.dead) {
+          if(player.playerKills > 0 && (tempPlayer==null || player.playerKills > tempPlayer.playerKills)){
+            tempPlayer = player;
+          }
           scoreboard.push({playerName:player.playerName,Kills:player.playerKills});
         }
       }
+     
+
+      if(this.playerWithMostKills!=tempPlayer && tempPlayer!=null){
+        if(this.playerWithMostKills!=null){
+        this.playerWithMostKills.notMostKills();
+        }
+        this.playerWithMostKills = tempPlayer;
+        this.playerWithMostKills.mostKills();
+        tempPlayer.hp++;
+      }
       scoreboard.sort((a,b)=>{ return b.Kills-a.Kills;})
+      
       this.io.sockets.in(this.ID).emit("scoreboard", scoreboard);
     }, 1000);
   }

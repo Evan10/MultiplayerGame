@@ -35,8 +35,10 @@ module.exports = class player {
     this.shieldUp = false;
     this.shieldstart=0;
     this.hp = 3;
+    this.maxhp = 3;
     this.dead = false;
-    this.energy = 10;
+    this.energy = 5;
+    this.lastEnergyUseTime = Date.now()+1000;
     this.maxEnergy=10;
 
     this.playerSpeed=3;
@@ -160,6 +162,15 @@ module.exports = class player {
    }
 }
 
+mostKills(){
+  this.maxhp = 4;
+  this.maxEnergy = 15;
+  this.game.io.to(this.game.ID).emit("new-king",this.ID);
+}
+notMostKills(){
+  this.maxhp = 3;
+  this.maxEnergy = 10;
+}
   
    collision(){
     if(this.hp>0){

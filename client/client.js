@@ -104,6 +104,7 @@ var socket = io();
 const players = {};
 const Bullets = {};
 let client_player;
+let playerWithMostKills = null;
 let gameStarted = false;
 const playerscoreboard = new scoreboard(
   canvas.width - canvas.width / 6,
@@ -111,6 +112,14 @@ const playerscoreboard = new scoreboard(
   canvas.width / 6,
   canvas.height / 2
 );
+
+socket.on("new-king",(id)=>{
+  if(playerWithMostKills!=null){
+  playerWithMostKills.notMostKills();
+  }
+  players[id].mostKills();
+  playerWithMostKills=players[id];
+});
 
 socket.on("new_bullet", (info) => {
   Bullets[info.id] = new bullet(info.id, info.x, info.y, info.angle);
