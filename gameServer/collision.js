@@ -35,7 +35,14 @@ for(let i = this.bulletlist.length-1; i >= 0 ; i --){
         let shieldendangle=p.mouseAngle+Math.PI/3;   
         if(!this.angle_is_between_angles(this.toDegrees(angle),this.toDegrees(shieldstartangle),this.toDegrees(shieldendangle))){
             p.collision();
-
+           
+            if(p.hp<=0){
+                let tp = b.player;
+                tp.playerKills++;
+                 if(b.player.hp < b.player.maxhp){
+                  b.player.hp++;
+                 }
+            }
         }
     }
     }

@@ -42,12 +42,14 @@ module.exports = class GameInstance {
       }
      
 
-      if(this.playerWithMostKills!=tempPlayer && tempPlayer!=null){
+      if(this.playerWithMostKills!=tempPlayer){
         if(this.playerWithMostKills!=null){
         this.playerWithMostKills.notMostKills();
         }
+        if(tempPlayer!=null){
         this.playerWithMostKills = tempPlayer;
         this.playerWithMostKills.mostKills();
+        }
       }
       scoreboard.sort((a,b)=>{ return b.Kills-a.Kills;})
       

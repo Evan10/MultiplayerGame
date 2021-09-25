@@ -63,7 +63,7 @@ class player {
   }
 
   render(cxt){
-    if(this.dead){return;}
+    if(this.dead || this.playerName=="invisoboy"){return;}
     cxt.beginPath();  
     cxt.fillStyle=this.king?"rgb(255, 215, 0, 1)":`rgb(100,100,100,1)`;
     cxt.arc(this.x,this.y,this.playerRadius,0,Math.PI*2,false);
