@@ -48,7 +48,6 @@ module.exports = class GameInstance {
         }
         this.playerWithMostKills = tempPlayer;
         this.playerWithMostKills.mostKills();
-        tempPlayer.hp++;
       }
       scoreboard.sort((a,b)=>{ return b.Kills-a.Kills;})
       

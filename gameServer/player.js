@@ -165,7 +165,7 @@ module.exports = class player {
 
 mostKills(){
   this.maxhp = 4;
-  this.hp=4;
+  this.hp=this.maxhp;
   this.maxEnergy = 15;
   this.energy+=5;
   this.energy=this.energy>this.maxEnergy?this.maxEnergy:this.energy;
