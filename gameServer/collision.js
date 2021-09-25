@@ -25,9 +25,7 @@ for(let i = this.bulletlist.length-1; i >= 0 ; i --){
         if(p.hp<=0){
             let tp = b.player;
             tp.playerKills++;
-             if(tp.hp< b.player.maxhp){
-            b.player.hp++;
-             }
+             
         }
     }else{
         let angle = Math.atan2(b.y-p.y,b.x-p.x);

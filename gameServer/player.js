@@ -39,6 +39,7 @@ module.exports = class player {
     this.dead = false;
     this.energy = 5;
     this.lastEnergyUseTime = Date.now()+1000;
+    this.energyRegenRate = 750;//.75s per energy
     this.maxEnergy=10;
 
     this.playerSpeed=3;
@@ -113,7 +114,7 @@ module.exports = class player {
   regenerateEnergy() {
     if (this.lastEnergyUseTime <  Date.now()) {//ms
 
-        this.setEnergyRegenTime(1000); //1 second delay when regening energy
+        this.setEnergyRegenTime(this.energyRegenRate); //1 second delay when regening energy
       if(this.energy<this.maxEnergy)this.energy++;
     }
   }
@@ -164,12 +165,18 @@ module.exports = class player {
 
 mostKills(){
   this.maxhp = 4;
+  this.hp=4;
   this.maxEnergy = 15;
+  this.energy+=5;
+  this.energy=this.energy>this.maxEnergy?this.maxEnergy:this.energy;
+  this.energyRegenRate=500;
   this.game.io.to(this.game.ID).emit("new-king",this.ID);
 }
 notMostKills(){
   this.maxhp = 3;
+  this.hp = this.hp>3?3:this.hp;
   this.maxEnergy = 10;
+  this.energyRegenRate=750;
 }
   
    collision(){
