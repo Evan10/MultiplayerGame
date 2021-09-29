@@ -89,7 +89,10 @@ const keys = [false, false, false, false, false];
 const particalspawners = [];
 this.gameMapSize = { w: 1000, h: 1000 };
 let respawn = false;
+let LostFocus = false;
 
+window.addEventListener("blur",()=>{LostFocus=true;});
+window.addEventListener("focus",()=>LostFocus=false);
 function getkeys() {
   return keys;
 }
@@ -281,6 +284,7 @@ function addparticalSpawner(
   endangle,
   fade
 ) {
+  if(LostFocus){return;}
   let ps = new particals(
     x,
     y,
@@ -377,6 +381,8 @@ let lastsecond = 0;
 let ticks = 0;
 
 function gameloop(timestamp) {
+  if(LostFocus){setTimeout(gameloop,1000);return;}
+
   frameID = requestAnimationFrame(gameloop);
 
   if (start === undefined) {

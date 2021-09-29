@@ -81,7 +81,7 @@ drawshield(cxt){
 let startangle = this.mouseAngle-(Math.PI/3);
 let endangle = this.mouseAngle+(Math.PI/3);
 cxt.beginPath();
-cxt.fillStyle="rgb(100,100,100,1)"; 
+cxt.fillStyle=this.king?"rgb(255, 215, 0, 1)":`rgb(100,100,100,1)`; 
 cxt.arc(this.x, this.y,this.playerRadius+10,startangle,endangle,false);
 cxt.arc(this.x, this.y,this.playerRadius+5,endangle,startangle,true);
 cxt.stroke();
