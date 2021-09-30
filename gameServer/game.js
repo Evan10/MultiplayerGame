@@ -12,7 +12,7 @@ module.exports = class GameInstance {
     this.laststamp = -1;
     this.tickrate = 60;
     this.ticks_per_frame = 1000 / this.tickrate;
-    this.ticks_per_client_update = this.tickrate / 20;
+    this.ticks_per_client_update = 50;
     this.ticks_last_client_update = 0;
     this.lastsecond = 0;
     this.ticks = 0;
@@ -81,9 +81,9 @@ module.exports = class GameInstance {
       }
     }
 
-    if (this.ticks_last_client_update > this.ticks_per_client_update) {
+    if (Date.now() >= this.ticks_last_client_update+this.ticks_per_client_update) {
       this.client_tick();
-      this.ticks_last_client_update = 0;
+      this.ticks_last_client_update = Date.now();
     }
    
   }
@@ -200,7 +200,6 @@ module.exports = class GameInstance {
     while (elapsed >= this.ticks_per_frame) {
       this.tick();
       this.ticks++;
-      this.ticks_last_client_update++;
       elapsed -= this.ticks_per_frame;
       this.laststamp = Date.now();
     }
