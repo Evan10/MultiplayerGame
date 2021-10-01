@@ -21,6 +21,7 @@ document.querySelector(".start").addEventListener("click", () => {
 document.addEventListener("mousemove", (e) => {
   socket.emit("mousepos", { x: e.offsetX, y: e.offsetY });
 });
+
 document.addEventListener("contextmenu", function (e) {
   e.preventDefault();
 });
@@ -90,6 +91,11 @@ const particalspawners = [];
 this.gameMapSize = { w: 1000, h: 1000 };
 let respawn = false;
 let LostFocus = false;
+let PlayerImage;
+
+let playerImageSize = {W:20,H:20};
+
+
 
 window.addEventListener("blur",()=>{LostFocus=true;});
 window.addEventListener("focus",()=>LostFocus=false);
@@ -213,6 +219,7 @@ socket.on("new_player", (info) => {
     info.playerName,
     info.dead
   );
+  players[info.id].loadPlayerImage(PlayerImage);
   console.log("new Player");
   console.log(info);
 });
@@ -244,6 +251,8 @@ socket.on("deadPlayer", (id) => {
 });
 
 socket.on("initClient", (info) => {
+
+
   client_player = new player(
     info.id,
     info.x,
@@ -252,6 +261,15 @@ socket.on("initClient", (info) => {
     this,
     info.playerName
   );
+  tempImage = new Image();  
+  tempImage.src = "./images/playerSprites.png";
+  tempImage.onload = function(){//  
+    Object.keys(players).forEach((key) => {
+      players[key].loadPlayerImage(tempImage);
+    });
+    PlayerImage=tempImage;
+  }
+
   players[info.id] = client_player;
   clientInfo();
   gameStarted=true;
@@ -355,6 +373,7 @@ function drawBorder(cxt) {
   cxt.lineWidth = 4;
   cxt.rect(0, 0, gameMapSize.w, gameMapSize.h);
   cxt.stroke();
+  cxt.closePath();
 }
 function drawbackground(x, y, cxt) {
   let rectwidth = canvas.width / 10;

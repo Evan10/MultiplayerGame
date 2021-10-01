@@ -1,5 +1,7 @@
 
 class player {
+ 
+
     constructor(id, x, y,player,client,playerName,dead) {
     this.ID = id;
     this.x = x;
@@ -12,6 +14,7 @@ class player {
 
     this.clientPlayer = player;
     this.playerName = playerName;
+    this.PlayerImage=null;
 
     this.hp = 3;
     this.maxhp = 3;
@@ -23,6 +26,7 @@ class player {
     this.shieldLifespan = 0;
     this.mouseAngle = 0;
     this.king=false;
+
   }
 
   tick() {
@@ -64,11 +68,9 @@ class player {
 
   render(cxt){
     if(this.dead){return;}
-    cxt.beginPath();  
-    cxt.fillStyle=this.king?"rgb(255, 215, 0, 1)":`rgb(100,100,100,1)`;
-    cxt.arc(this.x,this.y,this.playerRadius,0,Math.PI*2,false);
-    cxt.stroke();
-    cxt.fill();
+
+ 
+    this.drawPlayer(cxt);
     this.drawPlayerName(cxt);
     this.drawhealthbar(cxt);
     this.drawenergybar(cxt);
@@ -76,7 +78,23 @@ class player {
     this.drawshield(cxt);
     }
   }
-  
+  drawPlayer(cxt){
+
+    if(this.PlayerImage!=null){
+      cxt.save();
+      cxt.translate(this.x,this.y);
+      cxt.rotate(this.mouseAngle)
+      cxt.drawImage(this.PlayerImage,0,this.king?20:0,20,20,-this.playerRadius-10,-this.playerRadius-5,12+this.playerRadius*2,11+this.playerRadius*2);
+      cxt.restore();
+  }else{
+    cxt.beginPath();  
+    cxt.fillStyle=this.king?"rgb(255, 215, 0, 1)":`rgb(100,100,100,1)`;
+    cxt.arc(this.x,this.y,this.playerRadius,0,Math.PI*2,false);
+    cxt.stroke();
+    cxt.fill();
+    }
+  }
+
 drawshield(cxt){
 let startangle = this.mouseAngle-(Math.PI/3);
 let endangle = this.mouseAngle+(Math.PI/3);
@@ -84,6 +102,7 @@ cxt.beginPath();
 cxt.fillStyle=this.king?"rgb(255, 215, 0, 1)":`rgb(100,100,100,1)`; 
 cxt.arc(this.x, this.y,this.playerRadius+10,startangle,endangle,false);
 cxt.arc(this.x, this.y,this.playerRadius+5,endangle,startangle,true);
+cxt.closePath();
 cxt.stroke();
 cxt.fill();
 this.drawshieldlifespan(cxt);
@@ -166,5 +185,8 @@ notMostKills(){
   this.king=false;
 }
 
+loadPlayerImage(image){
+  this.PlayerImage=image;
+}
 
 }
