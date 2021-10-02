@@ -40,10 +40,11 @@ class player {
   }
 
   clientmovement(){
+    let move = true;
     if(this.client.WritingMessage){
     let xchange=0;
     let ychange=0;
-    let move = false;
+    move = false;
   if(this.client.getkeys()[0]){ychange-=1;move=true;}
   if(this.client.getkeys()[1]){xchange-=1;move=true;}
   if(this.client.getkeys()[2]){ychange+=1;move=true;}
