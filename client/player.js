@@ -8,7 +8,7 @@ class player {
     this.y = y;
     this.lastx=x;
     this.lasty=y;
-    this.playerAngle;
+    this.playerAngle=0;
     this.client=client;
     this.playerRadius = 30;
 
@@ -166,7 +166,7 @@ drawMessages(cxt){
   }
   }
   cxt.fillStyle = "rgba(60,60,60,1)";
-  console.log(this.messages.length);
+
   for(let i = 0;i < this.messages.length; i++){
   if(this.messages[i].lifespan<=0){this.messages.splice(i,1);continue;}
   this.messages[i].lifespan--;
