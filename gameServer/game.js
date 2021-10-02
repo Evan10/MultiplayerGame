@@ -30,7 +30,7 @@ module.exports = class GameInstance {
     this.gameloop();
     setInterval(() => {
       let scoreboard = [];
-      let tempPlayer = null;
+      let tempPlayer = this.playerWithMostKills;
       for (let i = this.players.length - 1; i >= 0; i--) {
         let player = this.players[i];
         if (player != null && !player.dead) {
