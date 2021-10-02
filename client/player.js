@@ -40,7 +40,7 @@ class player {
   }
 
   clientmovement(){
-    
+    if(this.client.WritingMessage){
     let xchange=0;
     let ychange=0;
     let move = false;
@@ -48,8 +48,10 @@ class player {
   if(this.client.getkeys()[1]){xchange-=1;move=true;}
   if(this.client.getkeys()[2]){ychange+=1;move=true;}
   if(this.client.getkeys()[3]){xchange+=1;move=true;}
+  this.playerAngle = Math.atan2(ychange,xchange);
+    }
    if(move){ 
-    this.playerAngle = Math.atan2(ychange,xchange);
+   
     this.x+=Math.cos(this.playerAngle)*this.playerspeed;
     this.y+=Math.sin(this.playerAngle)*this.playerspeed;
    }

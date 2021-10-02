@@ -77,7 +77,7 @@ else if(e.key==="Backspace"){
   }
 });
 document.addEventListener("keyup", (e) => {
-  if(WritingMessage){return;}//allow players to keep moving un current dir while writing message
+  
   switch (e.key) {
     case "w":
       keys[0] = false;

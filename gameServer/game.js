@@ -143,6 +143,7 @@ module.exports = class GameInstance {
 
   playerdead(player, i) {
     player.dead = true;
+    player.playerKills=0;
     this.io.sockets.in(this.ID).emit("deadPlayer", player.ID);
   }
 

@@ -19,6 +19,7 @@ module.exports = class player {
     });
     socket.on('disconnect', () => {
         let idx = game.players.indexOf(this);
+        this.playerKills=0;
         game.players.splice(idx, 1);
         game.io.to(game.ID).emit("player_left",socket.userID);
     });
