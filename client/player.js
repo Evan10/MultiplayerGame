@@ -27,6 +27,7 @@ class player {
     this.mouseAngle = 0;
     this.king=false;
 
+    this.messages = [];
   }
 
   tick() {
@@ -72,8 +73,10 @@ class player {
  
     this.drawPlayer(cxt);
     this.drawPlayerName(cxt);
+    this.drawMessages(cxt);
     this.drawhealthbar(cxt);
     this.drawenergybar(cxt);
+  
     if(this.shieldup){
     this.drawshield(cxt);
     }
@@ -144,7 +147,31 @@ drawhealthbar(cxt){
   }
 
 }
+drawMessages(cxt){
+  cxt.save();
+  let nx = this.x;
+  let ny = this.y-this.playerRadius-50;
+  cxt.textAlign = 'center';
+  cxt.font = '14px serif';
+  if(this.clientPlayer){
+  if(this.client.WritingMessage){
+  cxt.fillStyle =  "rgba(50,50,50,0.5";
+  cxt.fillRect(nx-this.playerRadius,ny-13,this.playerRadius*2,15)
+  cxt.fillStyle = "rgba(20,20,20,1)";
+  cxt.fillText(this.client.currentMessage,nx,ny);
+  ny-=15;
+  }
+  }
+  cxt.fillStyle = "rgba(60,60,60,1)";
+  console.log(this.messages.length);
+  for(let i = 0;i < this.messages.length; i++){
+  if(this.messages[i].lifespan<=0){this.messages.splice(i,1);continue;}
+  this.messages[i].lifespan--;
+  cxt.fillText(this.messages[i].message,nx,ny-((this.messages.length-i-1)*15));
+  }
+  cxt.restore();
 
+}
 drawPlayerName(cxt){
   cxt.save();
   let nx = this.x;
@@ -183,6 +210,12 @@ notMostKills(){
   this.maxhp = 3;
   this.maxEnergy = 10;
   this.king=false;
+}
+
+addToMessages(message){
+  if(this.messages.length>=5){return;}
+  console.log(message);
+  this.messages.push({message:message,lifespan:360});
 }
 
 loadPlayerImage(image){

@@ -38,6 +38,21 @@ document.onmouseup = function (e) {
 };
 
 document.addEventListener("keydown", (e) => {
+
+
+  if(e.key==="Enter"){
+    ToggleWritingMessage();
+    return;
+  }
+if(WritingMessage){
+if(e.key.length == 1){
+  currentMessage+=e.key;
+}
+else if(e.key==="Backspace"){
+  currentMessage= currentMessage.substr(0,currentMessage.length-1);
+}
+  return;
+}
   switch (e.key) {
     case "w":
       keys[0] = true;
@@ -62,6 +77,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 document.addEventListener("keyup", (e) => {
+  if(WritingMessage){return;}//allow players to keep moving un current dir while writing message
   switch (e.key) {
     case "w":
       keys[0] = false;
@@ -98,7 +114,7 @@ let playerImageSize = {W:20,H:20};
 
 
 window.addEventListener("blur",()=>{LostFocus=true;});
-window.addEventListener("focus",()=>LostFocus=false);
+window.addEventListener("focus",()=>{LostFocus=false;laststamp=performance.now();});
 function getkeys() {
   return keys;
 }
@@ -121,6 +137,23 @@ const playerscoreboard = new scoreboard(
   canvas.width / 6,
   canvas.height / 2
 );
+
+this.currentMessage = "";
+this.WritingMessage = false;
+this.MaxMessageSize = 50;
+
+function ToggleWritingMessage(){
+  if(WritingMessage&&currentMessage.replace(/ /g, '').length>=1){
+    let messageSent = currentMessage.substring(0, Math.min(MaxMessageSize, currentMessage.length));
+    socket.emit("player-message",messageSent);
+    currentMessage="";
+    WritingMessage=false;
+  }else if(!WritingMessage){WritingMessage=true;}
+}
+
+socket.on("message", (info)=>{
+players[info.playerID].addToMessages(info.message);
+});
 
 socket.on("new-king",(id)=>{
   if(playerWithMostKills!=null){
@@ -252,7 +285,6 @@ socket.on("deadPlayer", (id) => {
 
 socket.on("initClient", (info) => {
 
-
   client_player = new player(
     info.id,
     info.x,
@@ -331,6 +363,9 @@ function tick() {
 
 
 }
+
+
+
 
 function render() {
   cxt.fillStyle = "rgba(200,200,200,1)";

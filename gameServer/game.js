@@ -30,35 +30,40 @@ module.exports = class GameInstance {
     this.gameloop();
     setInterval(() => {
       let scoreboard = [];
-      let tempPlayer=null;
+      let tempPlayer = null;
       for (let i = this.players.length - 1; i >= 0; i--) {
         let player = this.players[i];
         if (player != null && !player.dead) {
-          if(player.playerKills > 0 && (tempPlayer==null || player.playerKills > tempPlayer.playerKills)){
+          if (
+            player.playerKills > 0 &&
+            (tempPlayer == null || player.playerKills > tempPlayer.playerKills)
+          ) {
             tempPlayer = player;
           }
-          scoreboard.push({playerName:player.playerName,Kills:player.playerKills});
+          scoreboard.push({
+            playerName: player.playerName,
+            Kills: player.playerKills,
+          });
         }
       }
-     
 
-      if(this.playerWithMostKills!=tempPlayer){
-        if(this.playerWithMostKills!=null){
-        this.playerWithMostKills.notMostKills();
+      if (this.playerWithMostKills != tempPlayer) {
+        if (this.playerWithMostKills != null) {
+          this.playerWithMostKills.notMostKills();
         }
-        if(tempPlayer!=null){
-        this.playerWithMostKills = tempPlayer;
-        this.playerWithMostKills.mostKills();
+        if (tempPlayer != null) {
+          this.playerWithMostKills = tempPlayer;
+          this.playerWithMostKills.mostKills();
         }
       }
-      scoreboard.sort((a,b)=>{ return b.Kills-a.Kills;})
-      
+      scoreboard.sort((a, b) => {
+        return b.Kills - a.Kills;
+      });
+
       this.io.sockets.in(this.ID).emit("scoreboard", scoreboard);
     }, 1000);
   }
 
-
-  
   tick() {
     this.collision.tick();
 
@@ -81,19 +86,19 @@ module.exports = class GameInstance {
       }
     }
 
-    if (Date.now() >= this.ticks_last_client_update+this.ticks_per_client_update) {
+    if (
+      Date.now() >=
+      this.ticks_last_client_update + this.ticks_per_client_update
+    ) {
       this.client_tick();
       this.ticks_last_client_update = Date.now();
     }
-   
   }
-
-  
 
   client_tick() {
     for (let i = this.players.length - 1; i >= 0; i--) {
       let player = this.players[i];
-      if (player != null&& !player.dead) {
+      if (player != null && !player.dead) {
         this.playerInfo[i] = {
           id: player.ID,
           x: player.x,
@@ -127,9 +132,9 @@ module.exports = class GameInstance {
     this.io.sockets.in(this.ID).emit("removebullet", id);
   }
 
-  addBullet(parentid, x, y, angle,player) {
+  addBullet(parentid, x, y, angle, player) {
     let id = createID();
-    let newbullet = new Bullet(parentid, id, x, y, angle,player);
+    let newbullet = new Bullet(parentid, id, x, y, angle, player);
     this.bullets.push(newbullet);
     this.io
       .to(this.ID)
@@ -148,19 +153,23 @@ module.exports = class GameInstance {
         x: this.players[i].x,
         y: this.players[i].y,
         playerName: this.players[i].playerName,
-        dead:this.players[i].dead
+        dead: this.players[i].dead,
       };
       console.log(playerinfo);
       socket.emit("new_player", playerinfo);
     }
-    if(this.playerWithMostKills!=null){
-    socket.emit("new-king",this.playerWithMostKills.ID);
+
+    if (this.playerWithMostKills != null) {
+      socket.emit("new-king", this.playerWithMostKills.ID);
     }
+
     let x = Math.random() * this.gameMapSize.w,
       y = Math.random() * this.gameMapSize.h;
     this.players.push(new Player(id, x, y, socket, this, playerName));
     socket.emit("initClient", { id: id, x: x, y: y, playerName: playerName });
-    socket.broadcast.to(this.ID).emit("new_player", { id: id, x: x, y: y,playerName: playerName });
+    socket.broadcast
+      .to(this.ID)
+      .emit("new_player", { id: id, x: x, y: y, playerName: playerName });
     socket.on("play-again", (playerName) => {
       let player =
         this.players[this.players.findIndex((plyr) => plyr.ID == id)];
@@ -170,9 +179,21 @@ module.exports = class GameInstance {
         Math.random() * this.gameMapSize.w,
         Math.random() * this.gameMapSize.h
       );
+     
       this.io.sockets
         .in(this.ID)
-        .emit("playerRespawn", { id: player.ID, x: player.x, y: player.y, playerName:playerName });
+        .emit("playerRespawn", {
+          id: player.ID,
+          x: player.x,
+          y: player.y,
+          playerName: playerName,
+        });
+    });
+
+    socket.on("player-message", (message) => {
+      this.io.sockets
+        .in(this.ID)
+        .emit("message", { playerID: id, message: message });
     });
   }
 
