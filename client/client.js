@@ -56,24 +56,22 @@ else if(e.key==="Backspace"){
   switch (e.key) {
     case "w":
       keys[0] = true;
-      socket.emit("keys", keys);
       break;
     case "a":
       keys[1] = true;
-      socket.emit("keys", keys);
       break;
     case "s":
       keys[2] = true;
-      socket.emit("keys", keys);
       break;
     case "d":
       keys[3] = true;
-      socket.emit("keys", keys);
       break;
     case " ":
       keys[4] = true;
-      socket.emit("keys", keys);
       break;
+  }
+  if(!WritingMessage){
+    socket.emit("keys", keys);
   }
 });
 document.addEventListener("keyup", (e) => {
@@ -81,24 +79,22 @@ document.addEventListener("keyup", (e) => {
   switch (e.key) {
     case "w":
       keys[0] = false;
-      socket.emit("keys", keys);
       break;
     case "a":
       keys[1] = false;
-      socket.emit("keys", keys);
       break;
     case "s":
       keys[2] = false;
-      socket.emit("keys", keys);
       break;
     case "d":
       keys[3] = false;
-      socket.emit("keys", keys);
       break;
     case " ":
       keys[4] = false;
-      socket.emit("keys", keys);
       break;
+  }
+  if(!WritingMessage){
+    socket.emit("keys", keys);
   }
 });
 
@@ -143,10 +139,12 @@ this.WritingMessage = false;
 this.MaxMessageSize = 50;
 
 function ToggleWritingMessage(){
-  if(WritingMessage&&currentMessage.replace(/ /g, '').length>=1){
+  if(WritingMessage){
+    if(currentMessage.replace(/ /g, '').length>=1){
     let messageSent = currentMessage.substring(0, Math.min(MaxMessageSize, currentMessage.length));
     socket.emit("player-message",messageSent);
     currentMessage="";
+    }
     WritingMessage=false;
   }else if(!WritingMessage){WritingMessage=true;}
 }

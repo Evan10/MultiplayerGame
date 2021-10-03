@@ -26,6 +26,7 @@ class player {
     this.shieldLifespan = 0;
     this.mouseAngle = 0;
     this.king=false;
+    this.move=false;
 
     this.messages = [];
   }
@@ -40,19 +41,18 @@ class player {
   }
 
   clientmovement(){
-    let move = true;
-    if(this.client.WritingMessage){
-    let xchange=0;
-    let ychange=0;
-    move = false;
-  if(this.client.getkeys()[0]){ychange-=1;move=true;}
-  if(this.client.getkeys()[1]){xchange-=1;move=true;}
-  if(this.client.getkeys()[2]){ychange+=1;move=true;}
-  if(this.client.getkeys()[3]){xchange+=1;move=true;}
-  this.playerAngle = Math.atan2(ychange,xchange);
+    
+    if(!this.client.WritingMessage){
+      let xchange=0;
+      let ychange=0;
+     this.move = false;
+     if(this.client.getkeys()[0]){ychange-=1;this.move=true;}
+     if(this.client.getkeys()[1]){xchange-=1;this.move=true;}
+     if(this.client.getkeys()[2]){ychange+=1;this.move=true;}
+     if(this.client.getkeys()[3]){xchange+=1;this.move=true;}
+     this.playerAngle = Math.atan2(ychange,xchange);
     }
-   if(move){ 
-   
+   if(this.move){ 
     this.x+=Math.cos(this.playerAngle)*this.playerspeed;
     this.y+=Math.sin(this.playerAngle)*this.playerspeed;
    }
@@ -216,8 +216,7 @@ notMostKills(){
 }
 
 addToMessages(message){
-  if(this.messages.length>=5){return;}
-  console.log(message);
+  if(this.messages.length>=5){this.messages.splice(4,1);}
   this.messages.push({message:message,lifespan:360});
 }
 
