@@ -68,6 +68,7 @@ module.exports = class GameInstance {
   tick() {
     if(this.players.length<=3){
       this.addPlayer( createID(),null,"BOT_PLAYER",true);
+      this.setMapSize();
     }
 
     this.collision.tick();
@@ -181,8 +182,9 @@ module.exports = class GameInstance {
   this.io.sockets.in(this.ID)
   .emit("new_player", { id: id, x: x, y: y, playerName: playerName });
 
+
     if(!bot){
-      if(this.players.length>4){
+      if(this.players.length>5){
      let botplayer = this.players[this.players.findIndex((plyr) => plyr.bot)];//remove a bot when a real player joins
      if(botplayer!=null){ 
      botplayer.playerKills=0;
@@ -191,6 +193,7 @@ module.exports = class GameInstance {
       this.io.to(this.ID).emit("player_left",botplayer.ID);
      }
       }
+      this.setMapSize();
 
     for (let i = this.players.length - 1; i >= 0; i--) {
       let playerinfo = {
@@ -247,6 +250,11 @@ module.exports = class GameInstance {
     
   }
  
+  setMapSize(){
+  this.gameMapSize = {w:this.players.length*250,h:this.players.length*250};
+  this.io.sockets.in(this.ID).emit("world-size",this.gameMapSize);
+}
+
   clientCommand(message){
   
 

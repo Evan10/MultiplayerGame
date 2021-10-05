@@ -23,6 +23,7 @@ module.exports = class player {
         let idx = game.players.indexOf(this);
         this.playerKills=0;
         game.players.splice(idx, 1);
+        game.setMapSize();
         game.io.to(game.ID).emit("player_left",socket.userID);
     });
     socket.on("canvasSize", (size)=>{ this.canvasSize = size; })
@@ -223,10 +224,11 @@ notMostKills(){
     let playerNearBy = this.getClosestPlayerNearBy(this.getPlayers());
     if(playerNearBy==null){mode="wander";}
     if(playerNearBy instanceof player) {
-    if(this.hp >= playerNearBy.hp||this.energy-2>=playerNearBy.energy){mode="chase";}
-    if(((this.energy+3<playerNearBy.energy&&playerNearBy.energy>4)||this.energy<3)){
+      if(this.hp >= playerNearBy.hp||this.energy-2>=playerNearBy.energy||this.energy>=6){mode="chase";}
+    if(((this.energy+3<playerNearBy.energy&&playerNearBy.energy>4&&this.energy<6)||this.energy<3)){
       mode="run";
     }
+    
   }
     if(this.bulletsClose(this.getBullets())){
       mode = "evade";
@@ -248,28 +250,31 @@ notMostKills(){
       if(this.dist(playerNearBy.x,playerNearBy.y,this.x,this.y)<250){
         this.mouseButtons[0]=true;
       }
-
+      this.botWanderTimer=0;
     }else if (mode == "run"){
-      this. angleToKeyInputs(this.angleToEnemy(playerNearBy)+Math.PI/2); 
+      this. angleToKeyInputs(this.angleToEnemy(playerNearBy)+Math.PI); 
+      this.botWanderTimer=0;
     }else if (mode == "wander"){
+   
     if(this.botWanderTimer<=0){ 
-      this.playerAngle = Math.random()*2*Math.PI;
-      this.angleToKeyInputs(); 
-      this.botWanderTimer=1000;
+      this.playerAngle = Math.random()*(2*Math.PI);
+      this.mouseAngle=this.playerAngle;
+      this.botWanderTimer=50;
    }else{
     this.botWanderTimer--;
    }
-     
+   this.angleToKeyInputs(this.playerAngle); 
 
     }else if (mode == "evade"){
       
       let numNearbyBullets = this.bulletsClose(this.getBullets());
       let nearestBullet = this.getClosestBullet(this.getBullets());
+      let distFromBullet = this.dist(nearestBullet.x,nearestBullet.y,this.x,this.y);
       let angleToBullet = Math.atan2(nearestBullet.y-this.y,nearestBullet.x-this.x); 
       if(numNearbyBullets>=2&& this.energy>=3){
         this.mouseAngle=angleToBullet+Math.PI/2;
         this.keys[4]=true;
-      }else  if(numNearbyBullets>=1&&this.energy>=1){
+      }else  if(numNearbyBullets>=1&&this.energy>=1&& distFromBullet<70){
         this.mouseAngle = angleToBullet;
         this.mouseButtons[1]=true;
       }
@@ -278,7 +283,7 @@ notMostKills(){
 
       }
       
-       
+      this.botWanderTimer=0;
 
     }
     

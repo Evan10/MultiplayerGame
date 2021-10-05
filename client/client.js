@@ -320,6 +320,8 @@ socket.on("playerRespawn", (info) => {
 
 socket.on("scoreboard", (info) => playerscoreboard.updatescoreboardinfo(info));
 
+socket.on("world-size",(info)=>{this.gameMapSize=info;})
+
 function clientInfo() {
   socket.emit("canvasSize", { w: canvas.width, h: canvas.height });
 }
