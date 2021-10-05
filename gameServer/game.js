@@ -186,8 +186,9 @@ module.exports = class GameInstance {
      let botplayer = this.players[this.players.findIndex((plyr) => plyr.bot)];//remove a bot when a real player joins
      if(botplayer!=null){ 
      botplayer.playerKills=0;
+     clearInterval(botplayer.messageIntervalID);
       this.players.splice(this.players.indexOf(botplayer), 1);
-      this.io.to(this.ID).emit("player_left",bot.ID);
+      this.io.to(this.ID).emit("player_left",botplayer.ID);
      }
       }
 
@@ -231,6 +232,9 @@ module.exports = class GameInstance {
     });
 
     socket.on("player-message", (message) => {
+      if(message.charAt(0)=="@"){
+        this.clientCommand(message);
+      }
       this.io.sockets
         .in(this.ID)
         .emit("message", { playerID: id, message: message });
@@ -243,7 +247,10 @@ module.exports = class GameInstance {
     
   }
  
+  clientCommand(message){
+  
 
+  }
   gamefull() {
     return this.players.length >= this.MaxPlayers;
   }
