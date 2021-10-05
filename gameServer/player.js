@@ -23,7 +23,6 @@ module.exports = class player {
         let idx = game.players.indexOf(this);
         this.playerKills=0;
         game.players.splice(idx, 1);
-        game.addBot();
         game.io.to(game.ID).emit("player_left",socket.userID);
     });
     socket.on("canvasSize", (size)=>{ this.canvasSize = size; })

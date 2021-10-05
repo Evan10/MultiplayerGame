@@ -186,8 +186,8 @@ module.exports = class GameInstance {
      let botplayer = this.players[this.players.findIndex((plyr) => plyr.bot)];//remove a bot when a real player joins
      if(botplayer!=null){ 
      botplayer.playerKills=0;
-      game.players.splice(this.players.indexOf(botplayer), 1);
-      game.io.to(game.ID).emit("player_left",bot.ID);
+      this.players.splice(this.players.indexOf(botplayer), 1);
+      this.io.to(this.ID).emit("player_left",bot.ID);
      }
       }
 
