@@ -66,7 +66,7 @@ module.exports = class player {
 
     if(this.bot){
     this.messageIntervalID = setInterval(()=>{
-      let insults = ["UR BAD","Trash","NOOOOOOOB","FIGHT ME NOOB","IM BETTER THAN YOU","STOP PLAYING THIS GAME"];
+      let insults = ["UR BAD","Trash","NOOOOOOOB","FIGHT ME NOOB","IM BETTER THAN YOU","STOP PLAYING THIS GAME","U UGLY","MY GRANDMA IS BETTER THAN YOU"];
       this.sendChat(insults[Math.floor(Math.random()*insults.length)])
     },2000)
   }
