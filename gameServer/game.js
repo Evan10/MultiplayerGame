@@ -27,6 +27,7 @@ module.exports = class GameInstance {
 
     this.gameMapSize = { w: 1000, h: 1000 };
 
+
     this.gameloop();
     setInterval(() => {
       let scoreboard = [];
@@ -65,6 +66,10 @@ module.exports = class GameInstance {
   }
 
   tick() {
+    if(this.players.length<=3){
+      this.addPlayer( createID(),null,"BOT_PLAYER",true);
+    }
+
     this.collision.tick();
 
     for (let i = this.players.length - 1; i >= 0; i--) {
@@ -141,13 +146,51 @@ module.exports = class GameInstance {
       .emit("new_bullet", { id: id, x: x, y: y, angle: angle });
   }
 
+
   playerdead(player, i) {
     player.dead = true;
     player.playerKills=0;
     this.io.sockets.in(this.ID).emit("deadPlayer", player.ID);
+    if(player.bot){
+      setTimeout(()=>{
+      player.resetPlayer();
+      player.setPostion(
+        Math.random() * this.gameMapSize.w,
+        Math.random() * this.gameMapSize.h
+      );
+     
+      this.io.sockets
+        .in(this.ID)
+        .emit("playerRespawn", {
+          id: player.ID,
+          x: player.x,
+          y: player.y,
+          playerName: player.playerName,
+        });
+      },2000);
+    }
   }
 
-  addPlayer(id, socket, playerName) {
+
+  
+  addPlayer(id, socket, playerName,bot) {
+    let x = Math.random() * this.gameMapSize.w,
+    y = Math.random() * this.gameMapSize.h;
+  this.players.push(new Player(id, x, y, socket, this, playerName,bot));
+
+  this.io.sockets.in(this.ID)
+  .emit("new_player", { id: id, x: x, y: y, playerName: playerName });
+
+    if(!bot){
+      if(this.players.length>4){
+     let botplayer = this.players[this.players.findIndex((plyr) => plyr.bot)];//remove a bot when a real player joins
+     if(botplayer!=null){ 
+     botplayer.playerKills=0;
+      game.players.splice(this.players.indexOf(botplayer), 1);
+      game.io.to(game.ID).emit("player_left",bot.ID);
+     }
+      }
+
     for (let i = this.players.length - 1; i >= 0; i--) {
       let playerinfo = {
         id: this.players[i].ID,
@@ -160,17 +203,13 @@ module.exports = class GameInstance {
       socket.emit("new_player", playerinfo);
     }
 
+   
+    socket.emit("initClient", { id: id, x: x, y: y, playerName: playerName });
+
     if (this.playerWithMostKills != null) {
       socket.emit("new-king", this.playerWithMostKills.ID);
     }
-
-    let x = Math.random() * this.gameMapSize.w,
-      y = Math.random() * this.gameMapSize.h;
-    this.players.push(new Player(id, x, y, socket, this, playerName));
-    socket.emit("initClient", { id: id, x: x, y: y, playerName: playerName });
-    socket.broadcast
-      .to(this.ID)
-      .emit("new_player", { id: id, x: x, y: y, playerName: playerName });
+    
     socket.on("play-again", (playerName) => {
       let player =
         this.players[this.players.findIndex((plyr) => plyr.ID == id)];
@@ -196,7 +235,14 @@ module.exports = class GameInstance {
         .in(this.ID)
         .emit("message", { playerID: id, message: message });
     });
+
+   
+    }
+
+
+    
   }
+ 
 
   gamefull() {
     return this.players.length >= this.MaxPlayers;

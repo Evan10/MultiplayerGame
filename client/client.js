@@ -15,6 +15,7 @@ document.querySelector(".start").addEventListener("click", () => {
   } else {
     socket.emit("play-again", document.querySelector(".player-name").value);
   }
+  titlescreen=false;
   document.querySelector(".start-screen").classList.toggle("hidden");
 });
 
@@ -38,21 +39,18 @@ document.onmouseup = function (e) {
 };
 
 document.addEventListener("keydown", (e) => {
-
-
-  if(e.key==="Enter"){
+  if (e.key === "Enter"&&!titlescreen) {
     ToggleWritingMessage();
     return;
   }
-if(WritingMessage){
-if(e.key.length == 1){
-  currentMessage+=e.key;
-}
-else if(e.key==="Backspace"){
-  currentMessage= currentMessage.substr(0,currentMessage.length-1);
-}
-  return;
-}
+  if (WritingMessage) {
+    if (e.key.length == 1) {
+      currentMessage += e.key;
+    } else if (e.key === "Backspace") {
+      currentMessage = currentMessage.substr(0, currentMessage.length - 1);
+    }
+    return;
+  }
   switch (e.key) {
     case "w":
       keys[0] = true;
@@ -70,12 +68,11 @@ else if(e.key==="Backspace"){
       keys[4] = true;
       break;
   }
-  if(!WritingMessage){
+  if (!WritingMessage) {
     socket.emit("keys", keys);
   }
 });
 document.addEventListener("keyup", (e) => {
-  
   switch (e.key) {
     case "w":
       keys[0] = false;
@@ -93,7 +90,7 @@ document.addEventListener("keyup", (e) => {
       keys[4] = false;
       break;
   }
-  if(!WritingMessage){
+  if (!WritingMessage) {
     socket.emit("keys", keys);
   }
 });
@@ -105,12 +102,15 @@ let respawn = false;
 let LostFocus = false;
 let PlayerImage;
 
-let playerImageSize = {W:20,H:20};
+let playerImageSize = { W: 20, H: 20 };
 
-
-
-window.addEventListener("blur",()=>{LostFocus=true;});
-window.addEventListener("focus",()=>{LostFocus=false;laststamp=performance.now();});
+window.addEventListener("blur", () => {
+  LostFocus = true;
+});
+window.addEventListener("focus", () => {
+  LostFocus = false;
+  laststamp = performance.now();
+});
 function getkeys() {
   return keys;
 }
@@ -138,27 +138,32 @@ this.currentMessage = "";
 this.WritingMessage = false;
 this.MaxMessageSize = 50;
 
-function ToggleWritingMessage(){
-  if(WritingMessage){
-    if(currentMessage.replace(/ /g, '').length>=1){
-    let messageSent = currentMessage.substring(0, Math.min(MaxMessageSize, currentMessage.length));
-    socket.emit("player-message",messageSent);
-    currentMessage="";
+function ToggleWritingMessage() {
+  if (WritingMessage) {
+    if (currentMessage.replace(/ /g, "").length >= 1) {
+      let messageSent = currentMessage.substring(
+        0,
+        Math.min(MaxMessageSize, currentMessage.length)
+      );
+      socket.emit("player-message", messageSent);
+      currentMessage = "";
     }
-    WritingMessage=false;
-  }else if(!WritingMessage){WritingMessage=true;}
+    WritingMessage = false;
+  } else if (!WritingMessage) {
+    WritingMessage = true;
+  }
 }
 
-socket.on("message", (info)=>{
-players[info.playerID].addToMessages(info.message);
+socket.on("message", (info) => {
+  players[info.playerID].addToMessages(info.message);
 });
 
-socket.on("new-king",(id)=>{
-  if(playerWithMostKills!=null){
-  playerWithMostKills.notMostKills();
+socket.on("new-king", (id) => {
+  if (playerWithMostKills != null) {
+    playerWithMostKills.notMostKills();
   }
   players[id].mostKills();
-  playerWithMostKills=players[id];
+  playerWithMostKills = players[id];
 });
 
 socket.on("new_bullet", (info) => {
@@ -278,11 +283,11 @@ socket.on("deadPlayer", (id) => {
   );
   if (p === client_player) {
     document.querySelector(".start-screen").classList.toggle("hidden");
+    titlescreen=true;
   }
 });
 
 socket.on("initClient", (info) => {
-
   client_player = new player(
     info.id,
     info.x,
@@ -291,18 +296,19 @@ socket.on("initClient", (info) => {
     this,
     info.playerName
   );
-  tempImage = new Image();  
+  tempImage = new Image();
   tempImage.src = "./images/playerSprites.png";
-  tempImage.onload = function(){//  
+  tempImage.onload = function () {
+    //
     Object.keys(players).forEach((key) => {
       players[key].loadPlayerImage(tempImage);
     });
-    PlayerImage=tempImage;
-  }
+    PlayerImage = tempImage;
+  };
 
   players[info.id] = client_player;
   clientInfo();
-  gameStarted=true;
+  gameStarted = true;
 });
 
 socket.on("playerRespawn", (info) => {
@@ -332,7 +338,9 @@ function addparticalSpawner(
   endangle,
   fade
 ) {
-  if(LostFocus){return;}
+  if (LostFocus) {
+    return;
+  }
   let ps = new particals(
     x,
     y,
@@ -358,18 +366,15 @@ function tick() {
   Object.keys(players).forEach((key) => {
     players[key].tick();
   });
-
-
 }
-
-
-
 
 function render() {
   cxt.fillStyle = "rgba(200,200,200,1)";
   cxt.fillRect(0, 0, canvas.width, canvas.height);
 
-if(!gameStarted){return;}
+  if (!gameStarted) {
+    return;
+  }
 
   let ty = 0,
     tx = 0;
@@ -398,7 +403,6 @@ if(!gameStarted){return;}
   });
   cxt.restore();
   playerscoreboard.render(cxt);
-
 }
 function drawBorder(cxt) {
   cxt.beginPath();
@@ -433,7 +437,10 @@ let lastsecond = 0;
 let ticks = 0;
 
 function gameloop(timestamp) {
-  if(LostFocus){setTimeout(gameloop,1000);return;}
+  if (LostFocus) {
+    setTimeout(gameloop, 1000);
+    return;
+  }
 
   frameID = requestAnimationFrame(gameloop);
 

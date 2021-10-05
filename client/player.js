@@ -216,7 +216,7 @@ notMostKills(){
 }
 
 addToMessages(message){
-  if(this.messages.length>=5){this.messages.splice(4,1);}
+  if(this.messages.length>=5){this.messages.splice(0,1);}
   this.messages.push({message:message,lifespan:360});
 }
 
