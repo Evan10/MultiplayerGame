@@ -23,9 +23,11 @@ this.alpha = 1;
     }
     render(cxt){
         cxt.beginPath();  
+        cxt.strokeStyle = "rgba(1, 1, 1, 0)";
         cxt.fillStyle = this.color+`${this.alpha})`;
         cxt.arc(this.x,this.y,this.size,0,Math.PI*2,false);
         cxt.fill();
+        cxt.closePath(); 
     }
 
 

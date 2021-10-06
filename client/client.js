@@ -101,6 +101,7 @@ this.gameMapSize = { w: 1000, h: 1000 };
 let respawn = false;
 let LostFocus = false;
 let PlayerImage;
+let bulletImages;
 
 let playerImageSize = { W: 20, H: 20 };
 
@@ -167,7 +168,7 @@ socket.on("new-king", (id) => {
 });
 
 socket.on("new_bullet", (info) => {
-  Bullets[info.id] = new bullet(info.id, info.x, info.y, info.angle);
+  Bullets[info.id] = new bullet(info.id, info.x, info.y, info.angle,bulletImages);
   addparticalSpawner(
     info.x,
     info.y,
@@ -296,16 +297,17 @@ socket.on("initClient", (info) => {
     this,
     info.playerName
   );
-  tempImage = new Image();
-  tempImage.src = "./images/playerSprites.png";
-  tempImage.onload = function () {
+  tempplayerImage = new Image();
+  tempplayerImage.src = "./images/playerSprites.png";
+  tempplayerImage.onload = function () {
     //
     Object.keys(players).forEach((key) => {
-      players[key].loadPlayerImage(tempImage);
+      players[key].loadPlayerImage(tempplayerImage);
     });
-    PlayerImage = tempImage;
+    PlayerImage = tempplayerImage;
   };
-
+  bulletImages = new Image();
+  bulletImages.src = "./images/FireballSpritesheet.png"
   players[info.id] = client_player;
   clientInfo();
   gameStarted = true;
@@ -320,7 +322,7 @@ socket.on("playerRespawn", (info) => {
 
 socket.on("scoreboard", (info) => playerscoreboard.updatescoreboardinfo(info));
 
-socket.on("world-size",(info)=>{this.gameMapSize=info;})
+socket.on("world-size",(info)=>{gameMapSize=info;})
 
 function clientInfo() {
   socket.emit("canvasSize", { w: canvas.width, h: canvas.height });
@@ -417,7 +419,7 @@ function drawBorder(cxt) {
 function drawbackground(x, y, cxt) {
   let rectwidth = canvas.width / 10;
   let rectheight = canvas.height / 10;
-
+  cxt.beginPath();
   for (let i = -1; i <= 10; i++) {
     for (let j = -1; j <= 10; j++) {
       cxt.strokeStyle = "black";
@@ -430,6 +432,8 @@ function drawbackground(x, y, cxt) {
     }
   }
   cxt.stroke();
+  cxt.closePath();
+ 
 }
 
 let frameID;

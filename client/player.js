@@ -98,6 +98,7 @@ class player {
     cxt.arc(this.x,this.y,this.playerRadius,0,Math.PI*2,false);
     cxt.stroke();
     cxt.fill();
+    cxt.closePath();  
     }
   }
 
@@ -105,12 +106,14 @@ drawshield(cxt){
 let startangle = this.mouseAngle-(Math.PI/3);
 let endangle = this.mouseAngle+(Math.PI/3);
 cxt.beginPath();
+cxt.strokeStyle = "black";
 cxt.fillStyle=this.king?"rgb(255, 215, 0, 1)":`rgb(100,100,100,1)`; 
 cxt.arc(this.x, this.y,this.playerRadius+10,startangle,endangle,false);
 cxt.arc(this.x, this.y,this.playerRadius+5,endangle,startangle,true);
 cxt.closePath();
 cxt.stroke();
 cxt.fill();
+cxt.closePath();
 this.drawshieldlifespan(cxt);
 }
 drawshieldlifespan(cxt){
@@ -124,6 +127,7 @@ drawshieldlifespan(cxt){
   cxt.arc(this.x,this.y,this.playerRadius/2,0,radian,false);
   cxt.moveTo(this.x,this.y);
   cxt.fill();
+  cxt.closePath();
 }
 
 drawenergybar(cxt){

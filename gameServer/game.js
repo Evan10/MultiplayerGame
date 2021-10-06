@@ -256,9 +256,10 @@ module.exports = class GameInstance {
 }
 
   clientCommand(message){
-  
+   
 
   }
+
   gamefull() {
     return this.players.length >= this.MaxPlayers;
   }
