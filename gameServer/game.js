@@ -24,6 +24,7 @@ module.exports = class GameInstance {
     this.closeGame = false;
     this.collision = new Collision(this.players, this.bullets);
     this.playerWithMostKills = null;
+    this.maxNumberOfBots = 4;
 
     this.gameMapSize = { w: 1000, h: 1000 };
 
@@ -76,7 +77,7 @@ module.exports = class GameInstance {
   }
 
   tick() {
-    if(this.players.length<=3){
+    if(this.maxNumberOfBots>this.numberOfBots()){
       this.addPlayer( createID(),null,"BOT_PLAYER",true);
       this.setMapSize();
     }
@@ -194,14 +195,8 @@ module.exports = class GameInstance {
 
 
     if(!bot){
-      if(this.players.length>5){
-     let botplayer = this.players[this.players.findIndex((plyr) => plyr.bot)];//remove a bot when a real player joins
-     if(botplayer!=null){ 
-     botplayer.playerKills=0;
-     clearInterval(botplayer.messageIntervalID);
-      this.players.splice(this.players.indexOf(botplayer), 1);
-      this.io.to(this.ID).emit("player_left",botplayer.ID);
-     }
+      if(this.numberOfBots()>this.maxNumberOfBots){
+        this.removeBot();
       }
       this.setMapSize();
 
@@ -246,7 +241,7 @@ module.exports = class GameInstance {
 
     socket.on("player-message", (message) => {
       if(message.charAt(0)=="@"){
-        this.clientCommand(message);
+        this.clientCommand(message.substring(1,message.length));
       }
       this.io.sockets
         .in(this.ID)
@@ -260,13 +255,46 @@ module.exports = class GameInstance {
     
   }
  
+removeBot(){
+  if(this.numberOfBots()>this.maxNumberOfBots){
+    let botplayer = this.players[this.players.findIndex((plyr) => plyr.bot)];//remove a bot when a real player joins
+    if(botplayer!=null){ 
+    botplayer.playerKills=0;
+    clearInterval(botplayer.messageIntervalID);
+     this.players.splice(this.players.indexOf(botplayer), 1);
+     this.io.to(this.ID).emit("player_left",botplayer.ID);
+    }
+}
+this.setMapSize();
+}
+numberOfBots(){
+  let bots=0;
+  for (let i = this.players.length - 1; i >= 0; i--) {
+    if (this.players[i].bot) {
+      bots++
+    }
+  }
+  return bots;
+};
+
+ 
   setMapSize(){
   this.gameMapSize = {w:this.players.length*250,h:this.players.length*250};
   this.io.sockets.in(this.ID).emit("world-size",this.gameMapSize);
 }
 
   clientCommand(message){
-   
+    message = message.split(" ").join("").toLowerCase();
+   switch(message){
+    case "removebot":
+      this.maxNumberOfBots--;
+      this.removeBot();
+    break;
+    case "addbot":
+      this.maxNumberOfBots=this.maxNumberOfBots<9?this.maxNumberOfBots+1:9;
+    break;
+    
+   }
 
   }
 
