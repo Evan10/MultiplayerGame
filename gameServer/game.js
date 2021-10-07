@@ -65,6 +65,16 @@ module.exports = class GameInstance {
     }, 1000);
   }
 
+  isGameEmpty(){
+    for (let i = this.players.length - 1; i >= 0; i--) {
+      let player = this.players[i];
+      if (!player.bot) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   tick() {
     if(this.players.length<=3){
       this.addPlayer( createID(),null,"BOT_PLAYER",true);
@@ -260,13 +270,15 @@ module.exports = class GameInstance {
 
   }
 
+  closeEmptyGame() {
+    this.closeGame = true;
+  };
+
   gamefull() {
     return this.players.length >= this.MaxPlayers;
   }
 
-  closeGame() {
-    this.closeGame = true;
-  }
+  
 
   gameloop() {
     if (this.closeGame) {

@@ -30,7 +30,8 @@ io.on("connection", (socket) => {
     addPlayerToGame(socket, playerName);
   });
   socket.on("disconnect", () => {
-    checkforEmptyGame();
+    setTimeout(
+    checkforEmptyGame,500);
 
     console.log("user disconnected");
   });
@@ -52,10 +53,10 @@ function checkforEmptyGame() {
   for (let i = games.length - 1; i >= 0; i--) {
     console.log("players:" + games[i].players.length);
     let tgame = games[i];
-    if (tgame instanceof GameInstance && tgame.players.length <= 0) {
-      console.log(tgame);
+   
+    if (tgame.isGameEmpty()) {
       try {
-        tgame.closeGame();
+        tgame.closeEmptyGame();
       } catch (e) {
         console.log(e);
       }
