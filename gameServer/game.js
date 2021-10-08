@@ -77,7 +77,7 @@ module.exports = class GameInstance {
   }
 
   tick() {
-    if(this.maxNumberOfBots>this.numberOfBots()){
+    if(this.maxNumberOfBots>this.numberOfBots()&&this.MaxPlayers>this.players.length){
       this.addPlayer( createID(),null,"BOT_PLAYER",true);
       this.setMapSize();
     }
@@ -193,9 +193,9 @@ module.exports = class GameInstance {
   this.io.sockets.in(this.ID)
   .emit("new_player", { id: id, x: x, y: y, playerName: playerName });
 
-
+  this.setMapSize();
     if(!bot){
-      if(this.numberOfBots()>this.maxNumberOfBots){
+      if(this.players.length>this.MaxPlayers){
         this.removeBot();
       }
       this.setMapSize();
@@ -256,7 +256,7 @@ module.exports = class GameInstance {
   }
  
 removeBot(){
-  if(this.numberOfBots()>this.maxNumberOfBots){
+  if(this.numberOfBots()>this.maxNumberOfBots||this.players.length>this.MaxPlayers){
     let botplayer = this.players[this.players.findIndex((plyr) => plyr.bot)];//remove a bot when a real player joins
     if(botplayer!=null){ 
     botplayer.playerKills=0;
@@ -288,6 +288,7 @@ numberOfBots(){
    switch(message){
     case "removebot":
       this.maxNumberOfBots--;
+      this.maxNumberOfBots=this.maxNumberOfBots<0?0:this.maxNumberOfBots;
       this.removeBot();
     break;
     case "addbot":
@@ -303,7 +304,7 @@ numberOfBots(){
   };
 
   gamefull() {
-    return this.players.length >= this.MaxPlayers;
+    return this.players.length-this.numberOfBots() >= this.MaxPlayers;
   }
 
   
