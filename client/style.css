@@ -41,12 +41,22 @@ div.box{
   background-color: rgb(114, 114, 114);
 }
 
+.player-commands{
+  margin-left:120%;
+}
+
 .box p{
   margin-left:50%;
   color: white;
   text-align: center;
   font-weight: bold;
   transform: translateX(-50%);
+}
+
+.player-commands p {
+  margin-left:0;
+  width: 20vw;
+  transform: translateX(10%);
 }
 .box h1{
   margin-left:50%;

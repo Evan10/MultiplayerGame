@@ -27,7 +27,7 @@ module.exports = class GameInstance {
     this.maxNumberOfBots = 4;
 
     this.gameMapSize = { w: 1000, h: 1000 };
-
+    this.mapMinSize = {w:250,h:250};
 
     this.gameloop();
     setInterval(() => {
@@ -279,7 +279,7 @@ numberOfBots(){
 
  
   setMapSize(){
-  this.gameMapSize = {w:this.players.length*250,h:this.players.length*250};
+  this.gameMapSize = {w:((this.players.length*150)+this.mapMinSize.w),h:((this.players.length*150)+this.mapMinSize.h)};
   this.io.sockets.in(this.ID).emit("world-size",this.gameMapSize);
 }
 
@@ -294,7 +294,16 @@ numberOfBots(){
     case "addbot":
       this.maxNumberOfBots=this.maxNumberOfBots<9?this.maxNumberOfBots+1:9;
     break;
-    
+    case "mapsize+":
+      this.mapMinSize.w+=250;
+      this.mapMinSize.h+=250;
+      this.setMapSize();
+    break;
+    case "mapsize-":
+      this.mapMinSize.w=this.mapMinSize.w<=0?0:this.mapMinSize.w-250;
+      this.mapMinSize.h=this.mapMinSize.h<=0?0:this.mapMinSize.h-250;
+      this.setMapSize();
+    break;
    }
 
   }
