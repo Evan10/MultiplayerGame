@@ -304,6 +304,9 @@ numberOfBots(){
       this.mapMinSize.h=this.mapMinSize.h<=0?0:this.mapMinSize.h-250;
       this.setMapSize();
     break;
+    case "nuke":
+      this.players.forEach((player,i)=>player.hp=0);
+    break;
    }
 
   }

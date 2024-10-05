@@ -9,9 +9,14 @@ window.onbeforeunload = function () {
 };
 
 document.querySelector(".start").addEventListener("click", () => {
+  let name = document.querySelector(".player-name").value;
+    if(name.length > 16){
+      window.alert("Name too long, max 16 characters");
+      return;
+    } 
   if (!respawn) {
-    socket.emit("join-game", document.querySelector(".player-name").value);
-    respawn = true;
+      socket.emit("join-game", name);
+      respawn = true;
   } else {
     socket.emit("play-again", document.querySelector(".player-name").value);
   }
